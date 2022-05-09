@@ -6,12 +6,12 @@ Vagrant.configure("2") do |config|
   config.vm.provider "hyperv"
   # config.vm.box_check_update = false
   config.vm.synced_folder ".", "/vagrant" # NOTE: On Hyper-V this will create an SMB share and require the user's credentials.
-  config.vm.boot_timeout = 600
+  config.vm.boot_timeout = 60
 
   config.vm.provider "hyperv" do |hv|
     hv.vmname = "{{ cookiecutter.vm_hostname }}"
-    hv.cpus = 2
-    hv.memory = 2048
+    hv.cpus = 4
+    hv.memory = 4096
     hv.linked_clone = true
   end
 end
