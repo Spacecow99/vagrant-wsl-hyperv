@@ -15,9 +15,9 @@ Vagrant.configure("2") do |config|
   # end
   config.vm.provider "hyperv" do |hv|
     hv.vmname = "{{ cookiecutter.vm_hostname }}"
-    hv.cpus = 4
+    hv.cpus = {{ cookiecutter.vm_cpus }}
     hv.maxmemory = nil
-    hv.memory = 4096
+    hv.memory = {{ cookiecutter.vm_memory }}
     hv.linked_clone = true
     hv.enable_virtualization_extensions = true
   end
