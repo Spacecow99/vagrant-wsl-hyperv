@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provider "hyperv" do |hv|
-    hv.vmname = "{{ cookiecutter.vm_hostname }}"
+    hv.vmname = "{{ cookiecutter.vm_name }}"
     hv.cpus = {{ cookiecutter.vm_cpus }}
     # NOTE: Set maxmemory to nil to override any maxmemory settings configured in the .box
     hv.maxmemory = nil
