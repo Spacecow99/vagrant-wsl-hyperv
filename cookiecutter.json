@@ -6,7 +6,7 @@
     "project_description": "Vagrant box using the Hyper-V provider.",
 
     "vm_image": "generic/ubuntu2004",
-    "vm_hostname": "hostname.local"
+    "vm_hostname": "hostname.local",
     "vm_cpus": "2",
     "vm_memory": "2048"
 }
