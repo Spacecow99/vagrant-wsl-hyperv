@@ -4,21 +4,37 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "{{ cookiecutter.vm_image }}"
   config.vm.provider "hyperv"
-  # config.vm.box_check_update = false
-  config.vm.synced_folder ".", "/vagrant" # NOTE: On Hyper-V this will create an SMB share and require the user's credentials.
+  config.vm.box_check_update = true
+  # NOTE: On Hyper-V this will create an SMB share and require the user's credentials.
+  config.vm.synced_folder ".", "/vagrant" 
   config.vm.boot_timeout = 60
+  # NOTE: This is required as creating file from WSL on a Windows drive causes issues with SSH due to permissions.
+  config.ssh.password = "vagrant"
+  config.ssh.insert_key = "false"
 
   # NOTE: This will break on non-WSL systems and only exists to enable communication between WSL and Default Switch should you be running from WSL.
-  # config.trigger.before :up do |trigger|
-  #   trigger.info = "Setup Forwarding between 'vEthernet (WSL)' and 'vEthernet (Default Switch)'"
-  #   trigger.run = {inline: '/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "& {Get-NetIPInterface | Where {$_.InterfaceAlias -eq \"vEthernet (WSL)\" -or $_.InterfaceAlias -eq \"vEthernet (Default Switch)\"} | Where {$_.Forwarding -eq \"Disabled\"} | Set-NetIPInterface -Forwarding Enabled -Verbose}"'}
-  # end
+  config.trigger.before :up do |trigger|
+    trigger.info = "Setup Forwarding between 'vEthernet (WSL)' and 'vEthernet (Default Switch)'"
+    trigger.run = {inline: '/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "& {Get-NetIPInterface | Where {$_.InterfaceAlias -eq \"vEthernet (WSL)\" -or $_.InterfaceAlias -eq \"vEthernet (Default Switch)\"} | Where {$_.Forwarding -eq \"Disabled\"} | Set-NetIPInterface -Forwarding Enabled -Verbose}"'}
+  end
+
   config.vm.provider "hyperv" do |hv|
-    hv.vmname = "{{ cookiecutter.vm_hostname }}"
+    hv.vmname = "{{ cookiecutter.vm_name }}"
     hv.cpus = {{ cookiecutter.vm_cpus }}
+    # NOTE: Set maxmemory to nil to override any maxmemory settings configured in the .box
     hv.maxmemory = nil
     hv.memory = {{ cookiecutter.vm_memory }}
     hv.linked_clone = true
-    hv.enable_virtualization_extensions = true
+    # hv.enable_virtualization_extensions = true
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    # NOTE: Will throw error at end of vagrant provisioning step but placeholder for ansible playbook(s) under provision/
+    ansible.playbook = ""
+    ansible.extra_vars = {
+      ansible_connection: "ssh",
+      ansible_user: "vagrant",
+      ansible_ssh_pass: "vagrant"
+    }
   end
 end
